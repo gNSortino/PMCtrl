@@ -1,6 +1,6 @@
 /*
  Title: PMCtrl.h
-  Author/Date: gNSortino@yahoo.com / 2013-07-06
+  Author: gNSortino@yahoo.com
   Description: This library implements the main features
 	of the Pololu Maestro. It was tested against the
 	micro-maestro. Additional features will be added as
@@ -17,9 +17,13 @@
 			http://www.pololu.com/docs/0J40/all#7.c  	
 	
 	**This code relies on the SoftwareSerial Arduino
-	library. It is recomended that this library also be 
+	library. It is recommended that this library also be 
 	#included in the calling code as the Arduino can
 	sometimes have problems if this isn't done.
+  Revision History:
+	2013-07-06 gNSortino@yahoo.com : initial release
+	2014-11-02 gNSortino@yahoo.com: updated getPosition and getErrors libraries to
+		account latency when reading data. getErrors will probably need further work.
 */
 
 #include "Arduino.h"
@@ -32,6 +36,7 @@
 */
 PMCtrl::PMCtrl (int rxPin, int txPin, long baudRate) : _serialCtrl (rxPin, txPin)	// RX, TX
 {
+	// The highest Baud rate the micro seems to support is 57600 (un-confirmed)
 	_serialCtrl.begin (baudRate);
 }
 
@@ -98,24 +103,34 @@ void PMCtrl::goHome (int deviceID)
 */
 unsigned int PMCtrl::getPosition (unsigned char channel, int deviceID)
 {
-  unsigned int servoPosition;
+  unsigned int servoPosition = 0;
+
+  // Clear any un-read data from the buffer
+  while (_serialCtrl.available())
+	_serialCtrl.read();
   
   _serialCtrl.write(0xAA);                      // start byte
   _serialCtrl.write(deviceID);                  // device id
   _serialCtrl.write(0x10);                      // command number
   _serialCtrl.write(channel);                   // servo number
   
-  if ( _serialCtrl.available() )
+  
+  // try 'i' times to read from the buffer (this accounts for latency)
+  for (int i = 0; i < 10; i += 1)
   {
-    servoPosition = _serialCtrl.read();
-    if ( _serialCtrl.available() )
-    {
-      servoPosition += ( _serialCtrl.read() * 256 );
-      return servoPosition / 4;
-    }
+	  if ( _serialCtrl.available() >= 2)
+	  {
+	  
+		servoPosition = _serialCtrl.read();
+		if ( _serialCtrl.available() )
+		{
+		  servoPosition += ( _serialCtrl.read() * 256 );
+		  servoPosition = servoPosition / 4;
+		  break;
+		}
+	  }
   }
-  else
-    return 0;  
+  return servoPosition;
 }
 
 
@@ -126,23 +141,25 @@ unsigned int PMCtrl::getPosition (unsigned char channel, int deviceID)
 */
 unsigned int PMCtrl::getErrors (unsigned char channel, int deviceID)
 {
-  unsigned int errors;
+  unsigned int errors = 0;
  
   _serialCtrl.write(0xAA);                      // start byte
   _serialCtrl.write(deviceID);                  // device id
   _serialCtrl.write(0x21);                      // command number
   
-  if ( _serialCtrl.available() )
-  {
-    errors = _serialCtrl.read();
-    if ( _serialCtrl.available() )
-    {
-      errors += _serialCtrl.read() * 256;
-      return errors;
-    }
-  }
-  else
-    return 0;  
+  for (int i = 0; i < 10; i += 1)
+  {  
+	  if ( _serialCtrl.available() )
+	  {
+		errors = _serialCtrl.read();
+		if ( _serialCtrl.available() )
+		{
+		  errors += _serialCtrl.read() * 256;
+		  break;
+		}
+	  }
+  }	
+  return errors;
 }
 
 /*

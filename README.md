@@ -22,7 +22,11 @@ I wrote this library specifically to use with my Arduino Uno and Pololu Micro Ma
 I did not include all of the methods (I only needed a few), however, if people would like others added or would like to add to this code themselves I’m happy to support this.
 
 ###Getting Started:
-There is a sample piece of code (PMCtrl.ino) that demonstrates how this library is intended to be used. Full documentation of the methods can be found in the PMCtrl.cpp file.
+There is a sample piece of code (PMCtrl.ino) in the examples folder that demonstrates how this library is intended to be used. Full documentation of the methods can be found in the PMCtrl.cpp file.
+
+###Change Log:
+* 2014-11-02 - fixed the structure of the example code to match the Arduino standard. Code suggestions were kindly made by Adriano @ Adrirobot http://it.emcelettronica.com/author/adrirobot/
+* 2014-11-02 - addressed a problem with the getPosition call, which previously required 2 calls in order to return a result. This is believed to be be due to latency. 
 
 ###Bugs/Issues:
 I have not yet tested the getErrors method. 

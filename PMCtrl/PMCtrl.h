@@ -1,6 +1,6 @@
 /*
  Title: PMCtrl.h
-  Author/Date: gNSortino@yahoo.com / 2013-07-06
+  Author: gNSortino@yahoo.com
   Description: This library implements the main features
 	of the Pololu Maestro. It was tested against the
 	micro-maestro. Additional features will be added as
@@ -17,12 +17,12 @@
 			http://www.pololu.com/docs/0J40/all#7.c  	
 	
 	**This code relies on the SoftwareSerial Arduino
-	library. It is recomended that this library also be 
+	library. It is recommended that this library also be 
 	#included in the calling code as the Arduino can
 	sometimes have problems if this isn't done.
 	
-	Function descriptions can be found in the .cpp file
-	of the same name.
+	Function descriptions and change history can be found in the 
+	.cpp file of the same name.
 */
 
 
