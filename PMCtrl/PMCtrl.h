@@ -1,6 +1,6 @@
 /*
  Title: PMCtrl.h
-  Author: gNSortino@yahoo.com
+  Author: gNSortino
   Description: This library implements the main features
 	of the Pololu Maestro. It was tested against the
 	micro-maestro. Additional features will be added as
@@ -39,6 +39,7 @@ class PMCtrl
 		~PMCtrl();
 		void setTarget (unsigned int pos, unsigned char channel, int deviceID);
 		void setServoSpeed (unsigned int servoSpeed, unsigned char channel, int deviceID);
+		void setAcceleration (unsigned int acceleration, unsigned char channel, int deviceID);
 		void goHome (int deviceID);	
 		unsigned int getPosition (unsigned char channel, int deviceID);
 		unsigned int getErrors (unsigned char channel, int deviceID);

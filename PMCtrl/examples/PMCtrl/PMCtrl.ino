@@ -1,6 +1,6 @@
 /*
  Title: PMCtrl (Demo)
-  Author: gNSortino@yahoo.com
+  Author: gNSortino
   Description: This is a demo library that shows how to
         test the main features of the Pololu Maestro library (PMCtrl)
         written for the arduino development environment.
@@ -24,10 +24,11 @@
 	of the same name. I am happy to add additional functions 
         as requested or have others add them as well.
   Revision History:
-    2013-07-06/gNSortino@yahoo.com : inital release
-    2014-11-02/gNSortino@yahoo.com : changed structure of sample program to reflect 
+    2013-07-06/gNSortino : inital release
+    2014-11-02/gNSortino : changed structure of sample program to reflect 
       arduino standards. Code suggestions were kindly made by Adriano @ Adrirobot 
       http://it.emcelettronica.com/author/adrirobot/
+	2015-02-07/gNSortino : added set setAcceleration call to demo program
 */
 
 #include <SoftwareSerial.h>
@@ -46,8 +47,8 @@ void loop ()
   Serial.println ("Beginning"); 
 
   Serial.println ("Now I rotate the servo - Speed 50"); 
-  servoCtrl.setServoSpeed (0, 0, 12);
-  servoCtrl.setTarget (608, 0, 12);
+  servoCtrl.setServoSpeed (50, 0, 12);
+  servoCtrl.setTarget (900, 0, 12);
   delay (5000);
   servoCtrl.getPosition(0,12);
   Serial.print ("Position is: "); Serial.println (servoCtrl.getPosition(0,12));
@@ -55,13 +56,16 @@ void loop ()
 
   Serial.println ("Now I rotate the servo - Speed 15");
   servoCtrl.setServoSpeed (15, 0, 12);
-  servoCtrl.setTarget (2224, 0, 12);
+  servoCtrl.setTarget (1680, 0, 12);
   delay (5000);
   servoCtrl.getPosition(0,12); Serial.print ("Position is: "); Serial.println (servoCtrl.getPosition(0,12));
 
+
+  servoCtrl.setAcceleration(2,0,12);
   servoCtrl.goHome(12);
   delay (5000);
 
   Serial.println ("Done");
+  servoCtrl.setAcceleration(0,0,12);
   delay (2000);
 }

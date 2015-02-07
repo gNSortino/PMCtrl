@@ -1,6 +1,6 @@
 /*
  Title: PMCtrl.h
-  Author: gNSortino@yahoo.com
+  Author: gNSortino
   Description: This library implements the main features
 	of the Pololu Maestro. It was tested against the
 	micro-maestro. Additional features will be added as
@@ -21,9 +21,10 @@
 	#included in the calling code as the Arduino can
 	sometimes have problems if this isn't done.
   Revision History:
-	2013-07-06 gNSortino@yahoo.com : initial release
-	2014-11-02 gNSortino@yahoo.com: updated getPosition and getErrors libraries to
+	2013-07-06 gNSortino : initial release
+	2014-11-02 gNSortino : updated getPosition and getErrors libraries to
 		account latency when reading data. getErrors will probably need further work.
+	2015-02-07 gNSortino : added setAcceleration method
 */
 
 #include "Arduino.h"
@@ -62,7 +63,7 @@ void PMCtrl::setTarget (unsigned int pos, unsigned char channel, int deviceID)
 /* 
   Sets the speed that the servo moves at. Note that 
   this does not have to be set. If left alone it will
-  take the default value, which should be instaneous. 
+  take the default value, which should be instantaneous. 
   Although this is of course limited by the physical speed 
   of the servo. Speed is set set in units of .25us/10ms. 
   For example, setting a value of 140 corresponds to a 
@@ -74,8 +75,6 @@ void PMCtrl::setTarget (unsigned int pos, unsigned char channel, int deviceID)
 */
 void PMCtrl::setServoSpeed (unsigned int servoSpeed, unsigned char channel, int deviceID)
 {
-  //Maestro uses quarter microseconds so convert accordingly
-  //pos = pos * 4;
   
   _serialCtrl.write(0xAA);                      // start byte
   _serialCtrl.write(deviceID);                  // device id
@@ -83,6 +82,20 @@ void PMCtrl::setServoSpeed (unsigned int servoSpeed, unsigned char channel, int 
   _serialCtrl.write(channel);                   // servo number
   _serialCtrl.write(servoSpeed & 0x7F);         // target low bits
   _serialCtrl.write((servoSpeed >> 7) & 0x7F);  // target high bits
+}
+
+/* 
+	Sets the acceleration of the servo
+*/
+void PMCtrl::setAcceleration (unsigned int acceleration, unsigned char channel, int deviceID)
+{
+  
+  _serialCtrl.write(0xAA);                      // start byte
+  _serialCtrl.write(deviceID);                  // device id
+  _serialCtrl.write(0x09);                      // command number
+  _serialCtrl.write(channel);                   // servo number
+  _serialCtrl.write(acceleration & 0x7F);         // target low bits
+  _serialCtrl.write((acceleration >> 7) & 0x7F);  // target high bits
 }
 
 /*
